@@ -3,6 +3,7 @@ import 'package:techcrunch_app/helpers/data.dart';
 import 'package:techcrunch_app/helpers/news.dart';
 import 'package:techcrunch_app/models/article_model.dart';
 import 'package:techcrunch_app/models/category_model.dart';
+import 'package:techcrunch_app/pages/article_view.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -89,7 +90,7 @@ class _HomeState extends State<Home> {
                       // Articles
                       Container(
                         child: ListView.builder(
-                            physics: const NeverScrollableScrollPhysics(),
+                            physics: ClampingScrollPhysics(),
                             itemCount: articles.length,
                             shrinkWrap: true,
                             itemBuilder: (context, index) {
@@ -97,6 +98,7 @@ class _HomeState extends State<Home> {
                                 imageUrl: articles[index].urlToImage,
                                 title: articles[index].title,
                                 description: articles[index].description,
+                                url: articles[index].url,
                               );
                             }),
                       ),
@@ -150,65 +152,75 @@ class CategoryTile extends StatelessWidget {
 }
 
 class BlogTile extends StatelessWidget {
-  final imageUrl, title, description;
-  BlogTile({this.imageUrl, this.title, this.description});
+  final imageUrl, title, description, url;
+  BlogTile({this.imageUrl, this.title, this.description, this.url});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: Column(
-        children: [
-          SizedBox(
-            width: 400,
-            height: 200,
-            child: Stack(
-              children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(10),
-                  child: Image.network(
-                    imageUrl,
-                    fit: BoxFit.cover,
-                    width: 400,
-                    height: 200,
-                  ),
-                ),
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(10),
-                  child: Container(
-                    alignment: Alignment.bottomCenter,
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                          colors: <Color>[
-                            Colors.black87,
-                            Colors.black54,
-                            Colors.black38,
-                          ]),
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => ArticleView(
+                      blogUrl: url,
+                    )));
+      },
+      child: Container(
+        child: Column(
+          children: [
+            SizedBox(
+              width: 400,
+              height: 200,
+              child: Stack(
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(10),
+                    child: Image.network(
+                      imageUrl,
+                      fit: BoxFit.cover,
+                      width: 400,
+                      height: 200,
                     ),
                   ),
-                ),
-                Container(
-                  margin: EdgeInsets.all(10),
-                  child: Text(
-                    title,
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 30,
-                        fontWeight: FontWeight.bold),
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(10),
+                    child: Container(
+                      alignment: Alignment.bottomCenter,
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                            colors: <Color>[
+                              Colors.black87,
+                              Colors.black54,
+                              Colors.black38,
+                            ]),
+                      ),
+                    ),
                   ),
-                ),
-              ],
+                  Container(
+                    margin: EdgeInsets.all(10),
+                    child: Text(
+                      title,
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 30,
+                          fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
-          Container(
-            padding: EdgeInsets.symmetric(vertical: 10),
-            child: Text(
-              description,
-              maxLines: 1,
+            Container(
+              padding: EdgeInsets.symmetric(vertical: 10),
+              child: Text(
+                description,
+                maxLines: 1,
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
